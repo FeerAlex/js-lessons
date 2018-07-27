@@ -91,17 +91,13 @@ function returnArgumentsArray() {
 
  var newSum = bindFunction(sum, 2, 4);
 
- function bindFunction(fn, a, b) {
-  return function() {
-    return fn(a, b);
-  }
- }
-
  console.log(newSum()) выведет 6
 */
-function bindFunction(fn) {
+function bindFunction(fn, ...args) {
   return function() {
-    return () => fn();
+    return args.reduce(function(a, b) {
+        return fn(a, b);
+    });
   }
 }
 
