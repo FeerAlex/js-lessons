@@ -61,7 +61,7 @@ function returnFnResult(fn) {
 */
 function returnCounter(number = 0) {
     return function () {
-        return number = number + 1;
+        return ++number;
     }
 }
 
@@ -94,11 +94,7 @@ function returnArgumentsArray() {
  console.log(newSum()) выведет 6
 */
 function bindFunction(fn, ...args) {
-    return function () {
-        return args.reduce(function (a, b) {
-            return fn(a, b);
-        });
-    }
+    return fn.bind(null, ...args);
 }
 
 export {
