@@ -56,7 +56,9 @@ function upperProps(obj) {
     let arr = [];
 
     for (let key in obj) {
-        arr.push(key.toUpperCase());
+        if (obj.hasOwnProperty(key)) {
+            arr.push(key.toUpperCase());
+        }
     }
 
     return arr;
@@ -69,10 +71,30 @@ function upperProps(obj) {
  Посмотрите как работает slice и повторите это поведение для массива, который будет передан в параметре array
  */
 function slice(array, from, to) {
-    let arr = [];
+    let length = array.length,
+        arr = [],
+        begin,
+        end;
 
-    for (let i = 0, k = (from && from > 0) ? from : 0; k < ((array[to]) ? to : array.length); i++, k++) {
-        arr[i] = array[k];
+    from = (typeof from !== 'undefined') ? from : 0;
+    to = (typeof to !== 'undefined') ? to : length;
+
+    if (from < 0) {
+        from = (Math.abs(from) > length) ? -length : from;
+        begin = length + from;
+    } else {
+        begin = (from > length) ? length : from;
+    }
+
+    if (to < 0) {
+        to = (Math.abs(to) > length) ? -length : to;
+        end = length + to;
+    } else {
+        end = (to > length) ? length : to;
+    }
+
+    for (let i = begin; i < end; i++) {
+        arr.push(array[i]);
     }
 
     return arr;
@@ -88,6 +110,7 @@ function createProxy(obj) {
     return new Proxy(obj, {
         set(target, prop, value) {
             target[prop] = value * value;
+            
             return true;
         }
     });
