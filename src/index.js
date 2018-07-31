@@ -76,16 +76,17 @@ function slice(array, from, to) {
     from = (typeof from !== 'undefined') ? from : 0;
     to = (typeof to !== 'undefined') ? to : array.length;
 
-    if (from < 0) {
-        from = (Math.abs(from) > array.length) ? -array.length + array.length : from + array.length;
-    } else {
-        from = (from > array.length) ? array.length : from;
-    }
+    from = getNormalVariable(from);
+    to = getNormalVariable(to);
 
-    if (to < 0) {
-        to = (Math.abs(to) > array.length) ? -array.length + array.length : to + array.length;
-    } else {
-        to = (to > array.length) ? array.length : to;
+    function getNormalVariable(direct) {
+        if (direct < 0) {
+            direct = (Math.abs(direct) > array.length) ? 0 : direct + array.length;
+        } else {
+            direct = (direct > array.length) ? array.length : direct;
+        }
+
+        return direct;
     }
 
     for (let i = from; i < to; i++) {
