@@ -18,16 +18,18 @@
  */
 function isAllTrue(array, fn) {
     if (!(array instanceof Array)) {
-        throw new Error("empty array");
+        throw new Error('empty array');
     } else if (array.length === 0) {
-        throw new Error("empty array");
+        throw new Error('empty array');
     } else if (!(fn instanceof Function)) {
-        throw new Error("fn is not a function");
+        throw new Error('fn is not a function');
     } else {
         let result = true;
 
         for (let i = 0; i < array.length; i ++) {
-            if (fn(array[i]) === false) result = false;
+            if (fn(array[i]) === false) {
+                result = false
+            }
         }
     
         return result;
@@ -52,16 +54,18 @@ function isAllTrue(array, fn) {
  */
 function isSomeTrue(array, fn) {
     if (!(array instanceof Array)) {
-        throw new Error("empty array");
+        throw new Error('empty array');
     } else if (array.length === 0) {
-        throw new Error("empty array");
+        throw new Error('empty array');
     } else if (!(fn instanceof Function)) {
-        throw new Error("fn is not a function");
+        throw new Error('fn is not a function');
     } else {
         let result = false;
 
         for (let i = 0; i < array.length; i ++) {
-            if (fn(array[i]) === true) result = true;
+            if (fn(array[i]) === true) {
+                result = true
+            }
         }
     
         return result;
@@ -80,6 +84,23 @@ function isSomeTrue(array, fn) {
    - fn не является функцией (с текстом "fn is not a function")
  */
 function returnBadArguments(fn) {
+
+    if (!(fn instanceof Function)) {
+        throw new Error('fn is not a function');
+    } else {
+        let [, ...args] = arguments,
+            badArgs = [];
+
+        for (let i = 0; i < args.length; i ++) {
+            try {
+                fn(args[i]);
+            } catch (e) {
+                badArgs.push(args[i]);
+            }
+        }
+    
+        return badArgs;
+    }
 }
 
 /*
@@ -100,6 +121,54 @@ function returnBadArguments(fn) {
    - какой-либо из аргументов div является нулем (с текстом "division by 0")
  */
 function calculator() {
+    let [number = 0] = arguments;
+    
+    if (!isFinite(number)) {
+        throw new Error('number is not a number');
+    } else {
+        return {
+            sum: function (...args) {
+                let res = number;
+
+                for (let i = 0; i < [...args].length; i++) {
+                    res += args[i];
+                }
+
+                return res;
+            },
+            dif: function (...args) {
+                let res = number;
+
+                for (let i = 0; i < [...args].length; i++) {
+                    res -= args[i];
+                }
+
+                return res;
+            },
+            div: function (...args) {
+                let res = number;
+
+                for (let i = 0; i < [...args].length; i++) {
+                    if (args[i] === 0) {
+                        throw new Error('division by 0');
+                    }
+                    
+                    res /= args[i];
+                }
+
+                return res;
+            },
+            mul: function (...args) {
+                let res = number;
+
+                for (let i = 0; i < [...args].length; i++) {
+                    res *= args[i];
+                }
+
+                return res;
+            }
+        }
+    }
 }
 
 /* При решении задач, пострайтесь использовать отладчик */
