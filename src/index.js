@@ -22,7 +22,7 @@ function map(array, fn) {
     let newArray = [];
 
     for (let i = 0; i < array.length; i++) {
-        newArray[i] = fn(array[i], i, array);
+        newArray.push(fn(array[i], i, array));
     }
 
     return newArray;
@@ -35,9 +35,10 @@ function map(array, fn) {
  Посмотрите как работает reduce и повторите это поведение для массива, который будет передан в параметре array
  */
 function reduce(array, fn, initial) {
-    let result = initial || array[0];
+    let i = 0,
+        result = initial || array[i++];
 
-    for (let i = (initial) ? 0 : 1; i < array.length; i++) {
+    for (; i < array.length; i++) {
         result = fn(result, array[i], i, array);
     }
 
