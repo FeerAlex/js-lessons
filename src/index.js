@@ -38,8 +38,9 @@ function reduce(array, fn, initial) {
     let i = 0,
         result = initial || array[i++];
 
-    for (; i < array.length; i++) {
+    while (i < array.length) {
         result = fn(result, array[i], i, array);
+        i++;
     }
 
     return result;
@@ -90,8 +91,8 @@ function slice(array, from, to) {
         return direct;
     }
 
-    for (let i = from; i < to; i++) {
-        arr.push(array[i]);
+    while (from < to) {
+        arr.push(array[from++]);
     }
 
     return arr;
