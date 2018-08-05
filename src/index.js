@@ -17,23 +17,17 @@
    isAllTrue([100, 2, 3, 4, 5], n => n < 10) // вернет false
  */
 function isAllTrue(array, fn) {
-    if (!(array instanceof Array)) {
-        throw new Error('empty array');
-    } else if (array.length === 0) {
+    if (!(array instanceof Array) || array.length === 0) {
         throw new Error('empty array');
     } else if (!(fn instanceof Function)) {
         throw new Error('fn is not a function');
-    } else {
-        let result = true;
-
-        for (let i = 0; i < array.length; i ++) {
-            if (fn(array[i]) === false) {
-                result = false
-            }
-        }
-    
-        return result;
     }
+
+    for (let i = 0; i < array.length; i ++) {
+        if (!fn(array[i])) return false;
+    }
+
+    return true;
 }
 
 /*
@@ -53,23 +47,17 @@ function isAllTrue(array, fn) {
    isSomeTrue([1, 2, 3, 4, 5], n => n > 20) // вернет false
  */
 function isSomeTrue(array, fn) {
-    if (!(array instanceof Array)) {
-        throw new Error('empty array');
-    } else if (array.length === 0) {
+    if (!(array instanceof Array) || array.length === 0) {
         throw new Error('empty array');
     } else if (!(fn instanceof Function)) {
         throw new Error('fn is not a function');
-    } else {
-        let result = false;
-
-        for (let i = 0; i < array.length; i ++) {
-            if (fn(array[i]) === true) {
-                result = true
-            }
-        }
-    
-        return result;
     }
+
+    for (let i = 0; i < array.length; i ++) {
+        if (fn(array[i])) return true;
+    }
+
+    return false;
 }
 
 /*
@@ -84,23 +72,21 @@ function isSomeTrue(array, fn) {
    - fn не является функцией (с текстом "fn is not a function")
  */
 function returnBadArguments(fn) {
-
     if (!(fn instanceof Function)) {
         throw new Error('fn is not a function');
-    } else {
-        let [, ...args] = arguments,
-            badArgs = [];
-
-        for (let i = 0; i < args.length; i ++) {
-            try {
-                fn(args[i]);
-            } catch (e) {
-                badArgs.push(args[i]);
-            }
-        }
-    
-        return badArgs;
     }
+
+    let badArgs = [];
+
+    for (let i = 1; i < arguments.length; i++) {
+        try {
+            fn(arguments[i]);
+        } catch (e) {
+            badArgs.push(arguments[i]);
+        }
+    }
+
+    return badArgs;
 }
 
 /*
@@ -127,42 +113,42 @@ function calculator() {
         throw new Error('number is not a number');
     } else {
         return {
-            sum: function (...args) {
+            sum: function () {
                 let res = number;
 
-                for (let i = 0; i < [...args].length; i++) {
-                    res += args[i];
+                for (let i = 0; i < arguments.length; i++) {
+                    res += arguments[i];
                 }
 
                 return res;
             },
-            dif: function (...args) {
+            dif: function () {
                 let res = number;
 
-                for (let i = 0; i < [...args].length; i++) {
-                    res -= args[i];
+                for (let i = 0; i < arguments.length; i++) {
+                    res -= arguments[i];
                 }
 
                 return res;
             },
-            div: function (...args) {
+            div: function () {
                 let res = number;
 
-                for (let i = 0; i < [...args].length; i++) {
-                    if (args[i] === 0) {
+                for (let i = 0; i < arguments.length; i++) {
+                    if (arguments[i] === 0) {
                         throw new Error('division by 0');
                     }
                     
-                    res /= args[i];
+                    res /= arguments[i];
                 }
 
                 return res;
             },
-            mul: function (...args) {
+            mul: function () {
                 let res = number;
 
-                for (let i = 0; i < [...args].length; i++) {
-                    res *= args[i];
+                for (let i = 0; i < arguments.length; i++) {
+                    res *= arguments[i];
                 }
 
                 return res;
