@@ -219,24 +219,20 @@ function collectDOMStat(root) {
  */
 function observeChildNodes(where, fn) {
     let observer = new MutationObserver(mutations => {
-        // fn();
         mutations.forEach(mutation => {
             if (mutation.addedNodes.length > 0) {
-                fn({type: 'insert', nodes: mutation.addedNodes});
+                fn({type: 'insert', nodes: [...mutation.addedNodes]});
             }
             
             if (mutation.removedNodes.length > 0) {
-                fn({type: 'remove', nodes: mutation.removedNodes});
+                fn({type: 'remove', nodes: [...mutation.removedNodes]});
             }
         });
     });
     
     observer.observe(where, {
-        attributes: true,
         childList: true,
         subtree: true,
-        characterData: true,
-        characterDataOldValue: true 
      });
 }
 
