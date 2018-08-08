@@ -50,15 +50,7 @@ function prepend(what, where) {
    findAllPSiblings(document.body) // функция должна вернуть массив с элементами div и span т.к. следующим соседом этих элементов является элемент с тегом P
  */
 function findAllPSiblings(where) {
-    let arr = [];
-
-    for (var child of where.children) {
-        if (child.nextElementSibling && child.nextElementSibling.tagName === 'P') {
-            arr.push(child);
-        }
-    }
-
-    return arr;
+    return [...where.childNodes].filter(child => child.nextElementSibling && child.nextElementSibling.tagName == 'P');
 }
 
 /*
@@ -101,13 +93,9 @@ function findError(where) {
    должно быть преобразовано в <div></div><p></p>
  */
 function deleteTextNodes(where) {
-    for (var child of where.childNodes) {
-        if (child.nodeName == "#text") {
-            where.removeChild(child);
-        }
+    for (let child of where.childNodes) {
+        if (child.nodeType == 3) where.removeChild(child);
     }
-
-    return [...where.children].reduce((p, c) => p.outerHTML + c.outerHTML);
 }
 
 /*
@@ -123,6 +111,17 @@ function deleteTextNodes(where) {
    должно быть преобразовано в <span><div><b></b></div><p></p></span>
  */
 function deleteTextNodesRecursive(where) {
+  	let childrens = where.childNodes,
+        i = 0;
+
+  	while (i < childrens.length) {
+    	if (childrens[i].nodeType === 3) {
+        	where.removeChild(childrens[i]);
+    	} else {
+        	deleteTextNodesRecursive(childrens[i]);
+        	i++;
+    	}
+    }
 }
 
 /*
@@ -146,6 +145,44 @@ function deleteTextNodesRecursive(where) {
    }
  */
 function collectDOMStat(root) {
+    let obj = {
+        tags: {},
+        classes: {},
+        texts: 0
+    };
+
+    function TextNodesRecursive(where) {
+        let childrens = where.childNodes,
+            i = 0;
+
+        while (i < childrens.length) {
+            
+            if (childrens[i].nodeType === 3) {
+                obj.texts++;
+            }
+
+            if (childrens[i].nodeType === 1) {
+                let classes = childrens[i].classList;
+                let tagName = childrens[i].nodeName;
+
+                obj.tags[tagName] = (obj.tags.hasOwnProperty(tagName)) ? obj.tags[tagName] + 1 : 1;
+                
+                if (classes) {
+                    for (let i = 0; i < classes.length; i++ ) {
+                        obj.classes[classes[i]] = (obj.classes.hasOwnProperty(classes[i])) ? obj.classes[classes[i]] + 1 : 1;
+                    }
+                }
+            }
+
+            TextNodesRecursive(childrens[i]);
+
+            i++;
+        }
+    }
+
+    TextNodesRecursive(root);
+
+    return obj;
 }
 
 /*
