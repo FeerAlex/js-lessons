@@ -24,7 +24,9 @@ function isAllTrue(array, fn) {
     }
 
     for (let i = 0; i < array.length; i ++) {
-        if (!fn(array[i])) return false;
+        if (!fn(array[i])) {
+            return false;
+        }
     }
 
     return true;
@@ -54,7 +56,9 @@ function isSomeTrue(array, fn) {
     }
 
     for (let i = 0; i < array.length; i ++) {
-        if (fn(array[i])) return true;
+        if (fn(array[i])) {
+            return true;
+        }
     }
 
     return false;
