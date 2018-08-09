@@ -48,6 +48,7 @@ function createDiv() {
    addListeners(newDiv);
  */
 function addListeners(target) {
+
 }
 
 let addDivButton = homeworkContainer.querySelector('#addDiv');

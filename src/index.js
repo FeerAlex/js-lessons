@@ -63,7 +63,11 @@ function emulateClick(target) {
    кликов для body, который будет вызывать указанную функцию только если кликнули на кнопку (элемент с тегом button)
  */
 function delegate(target, fn) {
-    // target.addEventListener('click', fn, 'BUTTON');
+    target.addEventListener('click', (e) => {
+        if (e.target.nodeName === 'BUTTON') {
+            fn();
+        }
+    });
 }
 
 /*
