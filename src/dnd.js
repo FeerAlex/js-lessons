@@ -50,15 +50,24 @@ function createDiv() {
    addListeners(newDiv);
  */
 function addListeners(target) {
-  
-    target.addEventListener('mousedown', () => document.addEventListener('mousemove', moveTo));
+    let coords = {};
+
+    target.addEventListener('mousedown', (e) => {
+        coords = {
+            left: e.clientX - target.getBoundingClientRect().left + pageXOffset,
+            top: e.clientY - target.getBoundingClientRect().top + pageYOffset
+        }
+
+        document.addEventListener('mousemove', moveTo);
+    });
     
     target.addEventListener('mouseup', () => document.removeEventListener('mousemove', moveTo));
 
     function moveTo(e) {
         e.preventDefault();
-        target.style.left = e.pageX - target.offsetWidth / 2 + 'px';
-        target.style.top = e.pageY - target.offsetHeight / 2 + 'px';
+
+        target.style.left = e.clientX - coords.left + 'px';
+        target.style.top = e.clientY - coords.top + 'px';
     }
 }
 
