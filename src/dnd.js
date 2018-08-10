@@ -51,13 +51,9 @@ function createDiv() {
  */
 function addListeners(target) {
   
-    target.addEventListener('mousedown', (e) => {
-        document.addEventListener('mousemove', moveTo);
-    });
+    target.addEventListener('mousedown', () => document.addEventListener('mousemove', moveTo));
     
-    target.addEventListener('mouseup', () => {
-        document.removeEventListener('mousemove', moveTo);
-    });
+    target.addEventListener('mouseup', () => document.removeEventListener('mousemove', moveTo));
 
     function moveTo(e) {
         e.preventDefault();
