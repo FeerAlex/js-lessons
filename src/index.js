@@ -118,44 +118,22 @@ function calculator() {
     } else {
         return {
             sum: function () {
-                let res = number;
-
-                for (let i = 0; i < arguments.length; i++) {
-                    res += arguments[i];
-                }
-
-                return res;
+                return [...arguments].reduce((p, c) => p += c, number);
             },
             dif: function () {
-                let res = number;
-
-                for (let i = 0; i < arguments.length; i++) {
-                    res -= arguments[i];
-                }
-
-                return res;
+                return [...arguments].reduce((p, c) => p -= c, number);
             },
             div: function () {
-                let res = number;
-
-                for (let i = 0; i < arguments.length; i++) {
-                    if (arguments[i] === 0) {
+                return [...arguments].reduce((p, c) => {
+                    if (c === 0) {
                         throw new Error('division by 0');
                     }
-                    
-                    res /= arguments[i];
-                }
 
-                return res;
+                    return p /= c;
+                }, number);
             },
             mul: function () {
-                let res = number;
-
-                for (let i = 0; i < arguments.length; i++) {
-                    res *= arguments[i];
-                }
-
-                return res;
+                return [...arguments].reduce((p, c) => p *= c, number);
             }
         }
     }
