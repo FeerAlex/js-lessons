@@ -1,4 +1,4 @@
-import {loadAndSortTowns} from './index';
+import { loadAndSortTowns } from './index';
 
 const homeworkContainer = document.querySelector('#homework-container');
 const loadingBlock = homeworkContainer.querySelector('#loading-block');
