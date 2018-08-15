@@ -30,10 +30,11 @@ function delayPromise(seconds) {
    loadAndSortTowns().then(towns => console.log(towns)) // должна вывести в консоль отсортированный массив городов
  */
 function loadAndSortTowns() {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
         fetch('https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json')
             .then(res => res.json())
-            .then(towns => resolve(towns.sort((a, b) => a.name.localeCompare(b.name))));
+            .then(towns => resolve(towns.sort((a, b) => a.name.localeCompare(b.name))))
+            .catch(() => reject());
     });
 }
 

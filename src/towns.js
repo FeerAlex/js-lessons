@@ -1,113 +1,79 @@
-/*
-    Страница должна предварительно загрузить список городов из
-    https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
-    и отсортировать в алфавитном порядке.
+import {loadAndSortTowns} from './index';
 
-    При вводе в текстовое поле, под ним должен появляться список тех городов,
-    в названии которых, хотя бы частично, есть введенное значение.
-    Регистр символов учитываться не должен, то есть "Moscow" и "moscow" - одинаковые названия.
-
-    Во время загрузки городов, на странице должна быть надпись "Загрузка..."
-    После окончания загрузки городов, надпись исчезает и появляется текстовое поле.
-
-    Разметку смотрите в файле towns-content.hbs
-
-    Запрещено использовать сторонние библиотеки. Разрешено пользоваться только тем, что встроено в браузер
-
-    *** Часть со звездочкой ***
-    Если загрузка городов не удалась (например, отключился интернет или сервер вернул ошибку),
-    то необходимо показать надпись "Не удалось загрузить города" и кнопку "Повторить".
-    При клике на кнопку, процесс загруки повторяется заново
-*/
-
-/*
-    homeworkContainer - это контейнер для всех ваших домашних заданий
-    Если вы создаете новые html-элементы и добавляете их на страницу, то дабавляйте их только в этот контейнер
-
-    Пример:
-    const newDiv = document.createElement('div');
-    homeworkContainer.appendChild(newDiv);
-*/
 const homeworkContainer = document.querySelector('#homework-container');
+const loadingBlock = homeworkContainer.querySelector('#loading-block');
+const filterBlock = homeworkContainer.querySelector('#filter-block');
+const filterInput = homeworkContainer.querySelector('#filter-input');
+const filterResult = homeworkContainer.querySelector('#filter-result');
 
-/*
-    Функция должна вернуть Promise, который должен быть разрешен с массивом городов в качестве значения
-
-    Массив городов пожно получить отправив асинхронный запрос по адресу
-    https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
-*/
 function loadTowns() {
-    return new Promise((resolve, reject) => {
-        fetch('https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json')
-            .then(res => res.json())
-            .then(towns => resolve(towns.sort((a, b) => a.name.localeCompare(b.name))))
-            .catch(() => reject());
-    });
+    return loadAndSortTowns();
 }
 
-/*
-    Функция должна проверять встречается ли подстрока chunk в строке full
-    Проверка должна происходить без учета регистра символов
-
-    Пример:
-    isMatching('Moscow', 'moscow') // true
-    isMatching('Moscow', 'mosc') // true
-    isMatching('Moscow', 'cow') // true
-    isMatching('Moscow', 'SCO') // true
-    isMatching('Moscow', 'Moscov') // false
-*/
 function isMatching(full, chunk) {
     return full.toUpperCase().indexOf(chunk.toUpperCase()) !== -1;
 }
 
-/* Блок с надписью "Загрузка" */
-const loadingBlock = homeworkContainer.querySelector('#loading-block');
-/* Блок с текстовым полем и результатом поиска */
-const filterBlock = homeworkContainer.querySelector('#filter-block');
-/* Текстовое поле для поиска по городам */
-const filterInput = homeworkContainer.querySelector('#filter-input');
-/* Блок с результатами поиска */
-const filterResult = homeworkContainer.querySelector('#filter-result');
+document.addEventListener('DOMContentLoaded', () => {
+    let townsList;
 
-filterInput.addEventListener('keyup', function () {
-    (function getTowns() {
+    const hideLoadMsg = () => {
+        loadingBlock.style.display = 'none';
+        filterBlock.style.display = 'block';
+    }
+    
+    const showLoadMsg = () => {
+        loadingBlock.style.display = 'block';
+        filterBlock.style.display = 'none';
+    }
+    
+    const inputListen = () => {
         filterResult.innerHTML = '';
-
+    
         if (filterInput.value === '') {
             return;
         }
 
-        loadingBlock.style.display = 'block';
-        filterBlock.style.display = 'none';
-
-        loadTowns().then((towns) => {
-            towns = towns.filter(town => isMatching(town.name, filterInput.value));
-
-            towns.forEach(town => {
-                let div = document.createElement('div');
-
-                div.textContent = town.name;
-                filterResult.appendChild(div);
-            });
-
-            loadingBlock.style.display = 'none';
-            filterBlock.style.display = 'block';
-        }).catch(() => {
-            let message = document.createElement('p'),
-                button = document.createElement('button');
-
-            loadingBlock.style.display = 'none';
-            message.textContent = 'Не удалось загрузить города';
-            button.textContent = 'Повторить';
-            homeworkContainer.appendChild(message);
-            homeworkContainer.appendChild(button);
-
-            button.addEventListener('click', () => {
-                homeworkContainer.removeChild(message);
-                homeworkContainer.removeChild(button);
-                getTowns();
-            });
+        townsList = townsList.filter(town => isMatching(town.name, filterInput.value));
+    
+        renderTowns(townsList);
+    }
+    
+    const renderTowns = (towns) => {
+        towns.forEach(town => {
+            let div = document.createElement('div');
+    
+            div.textContent = town.name;
+            filterResult.appendChild(div);
         });
+    }
+
+    (function getTowns() {
+        showLoadMsg();
+    
+        loadTowns()
+            .then(towns => {
+                hideLoadMsg();
+                townsList = towns;
+                filterInput.addEventListener('keyup', inputListen);
+            })
+            .catch(() => {
+                hideLoadMsg();
+                
+                let message = document.createElement('p'),
+                    button = document.createElement('button');
+                
+                message.textContent = 'Не удалось загрузить города';
+                button.textContent = 'Повторить';
+                homeworkContainer.appendChild(message);
+                homeworkContainer.appendChild(button);
+
+                button.addEventListener('click', () => {
+                    homeworkContainer.removeChild(message);
+                    homeworkContainer.removeChild(button);
+                    getTowns();
+                });
+            });
     })();
 });
 
