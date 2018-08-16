@@ -29,14 +29,14 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const inputListen = () => {
         filterResult.innerHTML = '';
-    
+
         if (filterInput.value === '') {
             return;
         }
 
-        townsList = townsList.filter(town => isMatching(town.name, filterInput.value));
+        let townsFilter = townsList.filter(town => isMatching(town.name, filterInput.value));
     
-        renderTowns(townsList);
+        renderTowns(townsFilter);
     }
     
     const renderTowns = (towns) => {
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 filterInput.addEventListener('keyup', inputListen);
             })
             .catch(() => {
-                hideLoadMsg();
+                loadingBlock.style.display = 'none';
                 
                 let message = document.createElement('p'),
                     button = document.createElement('button');

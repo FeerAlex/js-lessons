@@ -34,7 +34,7 @@ function loadAndSortTowns() {
         fetch('https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json')
             .then(res => res.json())
             .then(towns => resolve(towns.sort((a, b) => a.name.localeCompare(b.name))))
-            .catch(() => reject());
+            .catch((e) => reject(new Error(e)));
     });
 }
 
