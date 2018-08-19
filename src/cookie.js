@@ -36,7 +36,7 @@ let getCookies = (filter) => {
     let cookies = document.cookie.split('; ').reduce((p, c) => {
         const [name, value] = c.split('=');
 
-        p.push({ name, value });
+        !c || p.push({ name, value });
 
         return p;
     }, []);
@@ -47,11 +47,7 @@ let getCookies = (filter) => {
 }
 
 let setCookie = (name, value, expires) => {
-    let cookie = `${name}=${value}`;
-
-    if (expires) {
-        cookie = `${cookie}; expires=${expires}`;
-    }
+    let cookie = `${name}=${value}; expires=${expires || (new Date).getDate() + 1}`;
   
     document.cookie = cookie;
 }
@@ -100,10 +96,6 @@ let renderTable = () => {
 
     listTable.innerHTML = '';
 
-    if (!cookies[0]) {
-        return;
-    }
-
     cookies.forEach(cookie => listTable.appendChild(createRow(cookie.name, cookie.value)));
 }
 
@@ -111,4 +103,4 @@ filterNameInput.addEventListener('keyup', renderTable);
 
 addButton.addEventListener('click', addCookie);
 
-// renderTable();
+renderTable();
