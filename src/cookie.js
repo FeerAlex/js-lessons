@@ -23,30 +23,92 @@
  Запрещено использовать сторонние библиотеки. Разрешено пользоваться только тем, что встроено в браузер
  */
 
-/*
- homeworkContainer - это контейнер для всех ваших домашних заданий
- Если вы создаете новые html-элементы и добавляете их на страницу, то дабавляйте их только в этот контейнер
-
- Пример:
-   const newDiv = document.createElement('div');
-   homeworkContainer.appendChild(newDiv);
- */
 const homeworkContainer = document.querySelector('#homework-container');
-// текстовое поле для фильтрации cookie
 const filterNameInput = homeworkContainer.querySelector('#filter-name-input');
-// текстовое поле с именем cookie
 const addNameInput = homeworkContainer.querySelector('#add-name-input');
-// текстовое поле со значением cookie
 const addValueInput = homeworkContainer.querySelector('#add-value-input');
-// кнопка "добавить cookie"
 const addButton = homeworkContainer.querySelector('#add-button');
-// таблица со списком cookie
 const listTable = homeworkContainer.querySelector('#list-table tbody');
 
-filterNameInput.addEventListener('keyup', function() {
-    // здесь можно обработать нажатия на клавиши внутри текстового поля для фильтрации cookie
-});
+let isMatching = (full, chunk) => full.toUpperCase().indexOf(chunk.toUpperCase()) !== -1;
 
-addButton.addEventListener('click', () => {
-    // здесь можно обработать нажатие на кнопку "добавить cookie"
-});
+let getCookies = (filter) => {
+    let cookies = document.cookie.split('; ').reduce((p, c) => {
+        const [name, value] = c.split('=');
+
+        p.push({ name, value });
+
+        return p;
+    }, []);
+
+    cookies = cookies.filter(cookie => isMatching(cookie.name, filter) || isMatching(cookie.value, filter));
+
+    return cookies;
+}
+
+let setCookie = (name, value, expires) => {
+    let cookie = `${name}=${value}`;
+
+    if (expires) {
+        cookie = `${cookie}; expires=${expires}`;
+    }
+  
+    document.cookie = cookie;
+}
+
+let deleteCookie = (name) => {
+    setCookie(name, '', 'Thu, 01 Jan 1970 00:00:01 GMT');
+
+    renderTable();
+}
+
+let addCookie = () => {
+    setCookie(addNameInput.value, addValueInput.value);
+
+    addNameInput.value = '';
+    addValueInput.value = '';
+
+    renderTable();
+}
+
+let createRow = (name, value) => {
+    let tableRow = document.createElement('tr');
+    let nameTD = document.createElement('td');
+    let valueTD = document.createElement('td');
+    let deleteTD = document.createElement('td');
+    let deleteButton = document.createElement('button');
+
+    nameTD.innerHTML = name;
+    valueTD.innerHTML = value;
+    deleteButton.innerHTML = 'удалить';
+
+    deleteButton.addEventListener('click', () => {
+        deleteCookie(name);
+    });
+
+    tableRow.appendChild(nameTD);
+    tableRow.appendChild(valueTD);
+    tableRow.appendChild(deleteTD);
+    deleteTD.appendChild(deleteButton);
+    
+    return tableRow;
+}
+
+let renderTable = () => {
+    let filter = filterNameInput.value;
+    let cookies = getCookies(filter);
+
+    listTable.innerHTML = '';
+
+    if (!cookies[0]) {
+        return;
+    }
+
+    cookies.forEach(cookie => listTable.appendChild(createRow(cookie.name, cookie.value)));
+}
+
+filterNameInput.addEventListener('keyup', renderTable);
+
+addButton.addEventListener('click', addCookie);
+
+// renderTable();
