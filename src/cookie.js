@@ -32,7 +32,7 @@ const listTable = homeworkContainer.querySelector('#list-table tbody');
 
 let isMatching = (full, chunk) => full.toUpperCase().indexOf(chunk.toUpperCase()) !== -1;
 
-let getCookies = (filter) => {
+let getCookies = (filter = '') => {
     let cookies = document.cookie.split('; ').reduce((p, c) => {
         const [name, value] = c.split('=');
 
